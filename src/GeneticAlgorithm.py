@@ -179,23 +179,26 @@ class Breed:
         self.mutation_rate = mutation_rate
 
     def roulette(self, population):
-        sum = 0
-        for individual in population.population:
-            sum += individual.get_fitness()
+        fitness_sum = sum(individual.get_fitness() for individual in population.population)
+        probabilities = [1 - (individual.get_fitness() / fitness_sum) for individual in population.population]
+        total_prob = sum(probabilities)
+        probabilities = [prob / total_prob for prob in probabilities]
+
         parents = []
         while len(parents) < 2:
-            chance = random.uniform(0, sum)
+            chance = random.uniform(0, total_prob)
             sum_prob = 0
-            for individual in population.population:
-                sum_prob += individual.get_fitness()
+            for index, probability in enumerate(probabilities, 0):
+                sum_prob += probability
                 if sum_prob >= chance:
                     is_unique = True
                     for parent in parents:
-                        if parent.chromosome == individual.chromosome:
+                        if parent.chromosome == population.get_individual(index).chromosome:
                             is_unique = False
                     if is_unique:
-                        parents.append(individual)
+                        parents.append(population.get_individual(index))
                         break
+
         return parents
 
     def tournament(self, population, tournament_size=4):
