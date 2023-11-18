@@ -88,7 +88,6 @@ class MainGui:
                                  command=lambda: self.parse_args())
 
         solve_button.place(x=150, y=425)
-        test_button.place(x=250, y=425)
 
     def create_visual_grid(self, canvas, individual=None):
         canvas.delete("all")
